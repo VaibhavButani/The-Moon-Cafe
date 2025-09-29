@@ -1,7 +1,7 @@
 // AdminLogin.jsx
 import { useState } from "react";
 import axios from "axios";
-import API_BASE from "../../src/config"; // ✅ import API base
+import API_BASE from "../../config"; // ✅ import API base
 
 export default function AdminLogin() {
   const [username, setUsername] = useState("");
@@ -83,4 +83,5 @@ export default function AdminLogin() {
       </form>
     </div>
   );
+
 }
