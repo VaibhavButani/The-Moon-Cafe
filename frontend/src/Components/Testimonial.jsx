@@ -1,7 +1,7 @@
 // TestimonialSection.jsx
 import { FaQuoteLeft } from "react-icons/fa";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Autoplay, Pagination } from "swiper/modules";
+import { Autoplay, Pagination } from "swiper/modules"; // ✅ Correct import for Swiper v11+
 import AOS from "aos";
 import { useEffect } from "react";
 import "swiper/css";
@@ -60,7 +60,7 @@ export default function TestimonialSection() {
       {/* Swiper Slider */}
       <div data-aos="fade-up" className="max-w-6xl mx-auto">
         <Swiper
-          modules={[Autoplay, Pagination]}
+          modules={[Autoplay, Pagination]} // ✅ Fixed
           autoplay={{ delay: 5000, disableOnInteraction: false }}
           loop={true}
           spaceBetween={24}
