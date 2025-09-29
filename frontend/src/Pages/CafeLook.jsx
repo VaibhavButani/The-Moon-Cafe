@@ -102,7 +102,7 @@ export default function Gallery() {
       </style>
 
       {/* Hero Section */}
-      <div className="relative bg-[url(G3.jpg)] w-full h-[250px] md:h-[400px] bg-cover bg-center flex items-center justify-center">
+      <div className="relative bg-[url(services-bg.webp)] w-full h-[250px] md:h-[400px] bg-cover bg-center flex items-center justify-center">
         <div className="absolute inset-0 bg-black/50"></div>
         <div className="relative z-10 text-center text-white px-4">
           <h1 className="font-nunito text-3xl md:text-4xl font-bold">
