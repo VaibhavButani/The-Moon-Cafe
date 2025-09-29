@@ -20,8 +20,8 @@ import Contactpage from "./Pages/Contactpage";
 import LoadingPage from "./Pages/LoadingPage";
 import CafeLook from "./Pages/CafeLook";
 import ScrollToTop from "./Components/ScrollToTop";
-import AdminLogin from "../admin/Pages/AdminLogin";
-import AdminPage from "../admin/Pages/AdminPage";
+import AdminLogin from "./admin/Pages/AdminLogin";
+import AdminPage from "./admin/Pages/AdminPage";
 
 function AppContent() {
   const location = useLocation();
