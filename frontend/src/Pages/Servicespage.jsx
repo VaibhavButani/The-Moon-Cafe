@@ -9,7 +9,7 @@ const AboutPage = () => {
     <div className="w-full bg-[#f8f5f0]">
       {/* Hero Section */}
       <div
-        className="relative bg-[url(G3.jpg)] w-full h-[250px] md:h-[400px] bg-cover bg-center flex items-center justify-center"
+        className="relative bg-[url(services-bg.webp)] w-full h-[250px] md:h-[400px] bg-cover bg-center flex items-center justify-center"
       >
         <div className="absolute inset-0 bg-black/50"></div>
         <div className="relative z-10 text-center text-white px-4">
