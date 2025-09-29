@@ -1,6 +1,10 @@
-// src/axiosInstance.js
 import axios from "axios";
-import API_BASE from "./config";
+
+// In dev → use local backend, in prod → use Vercel proxy (/api)
+const API_BASE =
+  import.meta.env.MODE === "development"
+    ? "http://localhost:5000/api"   // adjust to your local backend port
+    : "/api";                       // Vercel will rewrite to Render backend
 
 const axiosInstance = axios.create({
   baseURL: API_BASE,
