@@ -1,0 +1,48 @@
+@import "tailwindcss";
+/* @tailwind base;
+@tailwind components;
+@tailwind utilities; */
+
+/* @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap');
+
+.font-nunito {
+    font-family: 'Nunito', sans-serif;
+} */
+
+/* body {
+    font-family: 'Nunito', sans-serif;
+} */
+
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
+
+
+
+.font-nunito {
+    font-family: 'Nunito', sans-serif;
+}
+.font-pacifico {
+  font-family: 'Pacifico', cursive;
+}
+
+/* 
+@tailwind components;
+@tailwind utilities;
+@tailwind base; */
+/* :root {
+  --primary: #4b3b35;
+  --accent: #f5d48d;
+  --bg-light: #f8f5f0;
+}
+
+h1, h2, h3, .section-heading {
+  @apply font-nunito font-bold text-[color:var(--primary)];
+}
+
+h1 { @apply text-3xl md:text-5xl; }
+h2 { @apply text-2xl md:text-4xl; }
+h3 { @apply text-xl md:text-2xl; }
+
+p, li, span {
+  @apply text-gray-800;
+} */
