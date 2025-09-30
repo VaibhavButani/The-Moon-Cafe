@@ -6,7 +6,7 @@ import Dashboard from "../Components/Dashboard";
 import GalleryManager from "../Components/GalleryManager";
 import ChangePasswordForm from "../Components/ChangePasswordForm";
 import ContactList from "../Components/ContactList";
-import Contact from "../Components/Contact";
+
 
 export default function AdminPage() {
   const [selectedFunction, setSelectedFunction] = useState("dashboard");
@@ -121,7 +121,7 @@ export default function AdminPage() {
         {selectedFunction === "contacts" && (
           <div className="space-y-6">
             {/* Contact form */}
-            <Contact
+            <ContactList
               onSuccess={(newMessage) =>
                 setContacts((prev) => [...prev, newMessage])
               }
@@ -138,3 +138,4 @@ export default function AdminPage() {
     </div>
   );
 }
+
