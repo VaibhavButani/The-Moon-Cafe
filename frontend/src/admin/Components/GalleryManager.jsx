@@ -183,12 +183,15 @@ export default function GalleryManager() {
                 src={`${API_BASE.replace(/\/+$/, "")}/uploads/gallery/${img.filename}`}
                 alt={img.filename}
                 className="w-full h-48 object-cover"
-                onClick={() => toggleSelect(img.filename)}
+                onClick={() => toggleSelect(img.filename)} // toggle on image click
               />
               <input
                 type="checkbox"
                 checked={isSelected}
-                onChange={() => toggleSelect(img.filename)}
+                onChange={(e) => {
+                  e.stopPropagation(); // prevent double toggle
+                  toggleSelect(img.filename);
+                }}
                 className="absolute top-2 right-2 w-5 h-5 cursor-pointer accent-red-600"
               />
             </div>
