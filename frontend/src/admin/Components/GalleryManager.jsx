@@ -175,7 +175,6 @@ export default function GalleryManager() {
           return (
             <div
               key={img.id || img.filename}
-              onClick={() => toggleSelect(img.filename)}
               className={`relative rounded-lg overflow-hidden shadow cursor-pointer transition ${
                 isSelected ? "border-4 border-red-600" : "border border-[#3d2f23]"
               }`}
@@ -184,6 +183,7 @@ export default function GalleryManager() {
                 src={`${API_BASE.replace(/\/+$/, "")}/uploads/gallery/${img.filename}`}
                 alt={img.filename}
                 className="w-full h-48 object-cover"
+                onClick={() => toggleSelect(img.filename)}
               />
               <input
                 type="checkbox"
