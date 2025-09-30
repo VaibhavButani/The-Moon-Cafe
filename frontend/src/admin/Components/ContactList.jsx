@@ -1,13 +1,13 @@
 import { useState } from "react";
 
-export default function ContactList({ contacts, handleDelete }) {
+export default function ContactList({ contacts = [], handleDelete }) {
   const [selectedContact, setSelectedContact] = useState(null);
 
   const confirmAndDelete = async (id) => {
     if (window.confirm("⚠️ Are you sure you want to delete this message?")) {
       const success = await handleDelete(id);
       if (!success) {
-        alert("❌ Failed to delete. Please try again.");
+        alert("Failed to delete. Please try again.");
       }
     }
   };
@@ -24,9 +24,9 @@ export default function ContactList({ contacts, handleDelete }) {
         <p className="text-gray-600 text-center py-10">No messages yet.</p>
       ) : (
         <ul className="space-y-4">
-          {contacts.map((msg, index) => (
+          {(contacts || []).map((msg, index) => (
             <li
-              key={msg.id}
+              key={msg.id || index}
               className="border p-4 rounded-xl shadow-md bg-[#f9f7f3] flex justify-between items-center hover:shadow-lg transition"
             >
               <div>
@@ -78,21 +78,11 @@ export default function ContactList({ contacts, handleDelete }) {
 
             {/* Details */}
             <div className="space-y-3 text-gray-800">
-              <p>
-                <strong>Name:</strong> {selectedContact.name}
-              </p>
-              <p>
-                <strong>Email:</strong> {selectedContact.email}
-              </p>
-              <p>
-                <strong>Phone:</strong> {selectedContact.phone}
-              </p>
-              <p>
-                <strong>Subject:</strong> {selectedContact.subject}
-              </p>
-              <p>
-                <strong>Message:</strong> {selectedContact.message}
-              </p>
+              <p><strong>Name:</strong> {selectedContact.name}</p>
+              <p><strong>Email:</strong> {selectedContact.email}</p>
+              <p><strong>Phone:</strong> {selectedContact.phone}</p>
+              <p><strong>Subject:</strong> {selectedContact.subject}</p>
+              <p><strong>Message:</strong> {selectedContact.message}</p>
             </div>
           </div>
         </div>
