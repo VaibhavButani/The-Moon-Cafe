@@ -1,4 +1,3 @@
-// routes/contactRoutes.js
 import express from "express";
 import fs from "fs";
 import path from "path";
@@ -6,24 +5,47 @@ import path from "path";
 const router = express.Router();
 const contactsFile = path.join(process.cwd(), "contacts.json");
 
+// Read contacts.json safely
+const readContacts = () => {
+  if (!fs.existsSync(contactsFile)) return [];
+  const data = fs.readFileSync(contactsFile, "utf-8");
+  return JSON.parse(data || "[]");
+};
+
+// Write contacts.json
+const writeContacts = (contacts) => {
+  fs.writeFileSync(contactsFile, JSON.stringify(contacts, null, 2));
+};
+
 // GET all contacts
-router.get("/", (req, res) => {
-  const data = JSON.parse(fs.readFileSync(contactsFile));
-  res.json(data);
+router.get("/contact", (req, res) => {
+  const contacts = readContacts();
+  res.json(contacts);
 });
 
-// DELETE contact by id
-router.delete("/:id", (req, res) => {
-  const { id } = req.params;
-  let data = JSON.parse(fs.readFileSync(contactsFile));
+// POST new contact
+router.post("/contact", (req, res) => {
+  const contacts = readContacts();
+  const newContact = {
+    id: Date.now().toString(), // simple unique id
+    ...req.body,
+  };
+  contacts.push(newContact);
+  writeContacts(contacts);
+  res.status(201).json(newContact);
+});
 
-  const newData = data.filter((c) => c._id !== id); // must match frontend key
-  if (data.length === newData.length) {
-    return res.status(404).json({ message: "Contact not found" });
+// DELETE contact
+router.delete("/contact/:id", (req, res) => {
+  let contacts = readContacts();
+  const newContacts = contacts.filter((c) => c.id !== req.params.id);
+
+  if (contacts.length === newContacts.length) {
+    return res.status(404).json({ error: "Contact not found" });
   }
 
-  fs.writeFileSync(contactsFile, JSON.stringify(newData, null, 2));
-  res.json({ message: "Deleted successfully" });
+  writeContacts(newContacts);
+  res.json({ success: true });
 });
 
 export default router;
