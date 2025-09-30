@@ -1,52 +1,43 @@
 import express from "express";
 import fs from "fs";
 import path from "path";
+import { verifyToken } from "./auth.js";
 
 const router = express.Router();
-const contactsFile = path.join(process.cwd(), "contacts.json");
+const CONTACT_FILE = path.join(process.cwd(), "backend/contacts.json");
 
-// ===== Helpers =====
-const readContacts = () => {
-  if (!fs.existsSync(contactsFile)) return [];
-  const data = fs.readFileSync(contactsFile, "utf-8");
-  return JSON.parse(data || "[]");
-};
+function readContacts() {
+  if (!fs.existsSync(CONTACT_FILE)) return [];
+  return JSON.parse(fs.readFileSync(CONTACT_FILE, "utf-8"));
+}
+function saveContacts(data) {
+  fs.writeFileSync(CONTACT_FILE, JSON.stringify(data, null, 2));
+}
 
-const writeContacts = (contacts) => {
-  fs.writeFileSync(contactsFile, JSON.stringify(contacts, null, 2));
-};
-
-// ===== Routes =====
-
-// GET all contacts (admin protected)
-router.get("/contact", (req, res) => {
-  const contacts = readContacts();
-  res.json(contacts);
-});
-
-// POST new contact (public form)
+// Public: save contact
 router.post("/contact", (req, res) => {
-  const contacts = readContacts();
-  const newContact = {
-    id: Date.now().toString(),
-    ...req.body,
-  };
-  contacts.push(newContact);
-  writeContacts(contacts);
-  res.status(201).json(newContact);
+  const newMsg = { id: Date.now().toString(), ...req.body };
+  const data = readContacts();
+  data.push(newMsg);
+  saveContacts(data);
+  res.json({ success: true, message: "Contact saved ✅", data: newMsg });
 });
 
-// DELETE contact (admin protected)
-router.delete("/contact/:id", (req, res) => {
-  let contacts = readContacts();
-  const newContacts = contacts.filter((c) => c.id !== req.params.id);
+// Admin: get all
+router.get("/contact", verifyToken, (req, res) => {
+  const data = readContacts();
+  res.json(data);
+});
 
-  if (contacts.length === newContacts.length) {
-    return res.status(404).json({ error: "Contact not found" });
+// Admin: delete
+router.delete("/contact/:id", verifyToken, (req, res) => {
+  const data = readContacts();
+  const updated = data.filter((c) => c.id !== req.params.id);
+  if (updated.length === data.length) {
+    return res.status(404).json({ message: "Message not found" });
   }
-
-  writeContacts(newContacts);
-  res.json({ success: true });
+  saveContacts(updated);
+  res.json({ success: true, message: "Message deleted successfully" });
 });
 
 export default router;
