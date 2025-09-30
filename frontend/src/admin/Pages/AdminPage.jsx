@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
-import { ChevronRight, ChevronLeft } from "lucide-react"; // arrow icons
+import { ChevronRight, ChevronLeft } from "lucide-react";
 
 import axiosInstance from "../../axiosInstance";
 import Dashboard from "../Components/Dashboard";
 import GalleryManager from "../Components/GalleryManager";
 import ChangePasswordForm from "../Components/ChangePasswordForm";
 import ContactList from "../Components/ContactList";
+import Contact from "../Components/Contact";
 
 export default function AdminPage() {
   const [selectedFunction, setSelectedFunction] = useState("dashboard");
@@ -110,15 +111,27 @@ export default function AdminPage() {
       <div className="flex-1 p-6 lg:p-10 overflow-auto">
         {selectedFunction === "dashboard" && (
           <Dashboard
-            message={message || "Welcome back!"}
-            contactCount={contacts.length || 0}
-            galleryCount={galleryCount || 0}
+            message={message}
+            contactCount={contacts.length}
+            galleryCount={galleryCount}
             setSelectedFunction={setSelectedFunction}
           />
         )}
+
         {selectedFunction === "contacts" && (
-          <ContactList contacts={contacts} handleDelete={handleDelete} />
+          <div className="space-y-6">
+            {/* Contact form */}
+            <Contact
+              onSuccess={(newMessage) =>
+                setContacts((prev) => [...prev, newMessage])
+              }
+            />
+
+            {/* Contact list */}
+            <ContactList contacts={contacts} handleDelete={handleDelete} />
+          </div>
         )}
+
         {selectedFunction === "gallery" && <GalleryManager />}
         {selectedFunction === "changePassword" && <ChangePasswordForm />}
       </div>
