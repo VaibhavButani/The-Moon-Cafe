@@ -5,26 +5,31 @@ export default function ContactList({ contacts = [], handleDelete }) {
 
   const confirmAndDelete = async (id) => {
     if (window.confirm("⚠️ Are you sure you want to delete this message?")) {
+      if (!handleDelete) return;
+
       const success = await handleDelete(id);
       if (!success) {
-        alert("Failed to delete. Please try again.");
+        alert("❌ Failed to delete. Please try again.");
       }
     }
   };
+
+  // Ensure contacts is always an array
+  const safeContacts = Array.isArray(contacts) ? contacts : [];
 
   return (
     <div className="bg-white shadow-lg rounded-2xl p-6 border border-gray-200 relative">
       {/* Header */}
       <h2 className="text-2xl font-bold mb-4 text-[#957d49] flex items-center gap-2">
-        📩 Contact Messages <span className="text-gray-600">({contacts.length})</span>
+        📩 Contact Messages <span className="text-gray-600">({safeContacts.length})</span>
       </h2>
 
       {/* Empty State */}
-      {contacts.length === 0 ? (
+      {safeContacts.length === 0 ? (
         <p className="text-gray-600 text-center py-10">No messages yet.</p>
       ) : (
         <ul className="space-y-4">
-          {(contacts || []).map((msg, index) => (
+          {safeContacts.map((msg, index) => (
             <li
               key={msg.id || index}
               className="border p-4 rounded-xl shadow-md bg-[#f9f7f3] flex justify-between items-center hover:shadow-lg transition"
@@ -45,12 +50,14 @@ export default function ContactList({ contacts = [], handleDelete }) {
                 >
                   View
                 </button>
-                <button
-                  onClick={() => confirmAndDelete(msg.id)}
-                  className="bg-red-500 text-white px-4 py-1.5 rounded-lg hover:bg-red-600 hover:scale-105 transition shadow cursor-pointer"
-                >
-                  Delete
-                </button>
+                {handleDelete && (
+                  <button
+                    onClick={() => confirmAndDelete(msg.id)}
+                    className="bg-red-500 text-white px-4 py-1.5 rounded-lg hover:bg-red-600 hover:scale-105 transition shadow cursor-pointer"
+                  >
+                    Delete
+                  </button>
+                )}
               </div>
             </li>
           ))}
@@ -60,10 +67,7 @@ export default function ContactList({ contacts = [], handleDelete }) {
       {/* Popup Modal */}
       {selectedContact && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
-          <div
-            className="bg-white/80 backdrop-blur-md w-[90%] max-w-lg p-6 rounded-2xl shadow-2xl relative border border-gray-200 animate-slideUp"
-          >
-            {/* Close Button */}
+          <div className="bg-white/80 backdrop-blur-md w-[90%] max-w-lg p-6 rounded-2xl shadow-2xl relative border border-gray-200 animate-slideUp">
             <button
               onClick={() => setSelectedContact(null)}
               className="absolute top-3 right-3 bg-gray-200 text-[#4d3e20] text-xl font-extrabold px-3 py-1 rounded-full hover:bg-gray-300 hover:scale-110 transition shadow"
@@ -71,12 +75,10 @@ export default function ContactList({ contacts = [], handleDelete }) {
               X
             </button>
 
-            {/* Title */}
             <h3 className="text-2xl font-bold text-[#957d49] mb-6 text-center">
               Contact Details
             </h3>
 
-            {/* Details */}
             <div className="space-y-3 text-gray-800">
               <p><strong>Name:</strong> {selectedContact.name}</p>
               <p><strong>Email:</strong> {selectedContact.email}</p>
