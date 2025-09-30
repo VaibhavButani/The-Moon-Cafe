@@ -8,23 +8,18 @@ export default function ContactList({ contacts = [], handleDelete }) {
       if (!handleDelete) return;
 
       const success = await handleDelete(id);
-      if (!success) {
-        alert("❌ Failed to delete. Please try again.");
-      }
+      if (!success) alert("❌ Failed to delete. Please try again.");
     }
   };
 
-  // Ensure contacts is always an array
   const safeContacts = Array.isArray(contacts) ? contacts : [];
 
   return (
     <div className="bg-white shadow-lg rounded-2xl p-6 border border-gray-200 relative">
-      {/* Header */}
       <h2 className="text-2xl font-bold mb-4 text-[#957d49] flex items-center gap-2">
         📩 Contact Messages <span className="text-gray-600">({safeContacts.length})</span>
       </h2>
 
-      {/* Empty State */}
       {safeContacts.length === 0 ? (
         <p className="text-gray-600 text-center py-10">No messages yet.</p>
       ) : (
@@ -38,9 +33,7 @@ export default function ContactList({ contacts = [], handleDelete }) {
                 <p className="font-semibold text-gray-800 text-lg">
                   {index + 1}. {msg.name}
                 </p>
-                <p className="text-gray-600 text-sm">
-                  📞 {msg.phone || "No phone"}
-                </p>
+                <p className="text-gray-600 text-sm">📞 {msg.phone || "No phone"}</p>
               </div>
 
               <div className="flex gap-3">
@@ -64,7 +57,6 @@ export default function ContactList({ contacts = [], handleDelete }) {
         </ul>
       )}
 
-      {/* Popup Modal */}
       {selectedContact && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
           <div className="bg-white/80 backdrop-blur-md w-[90%] max-w-lg p-6 rounded-2xl shadow-2xl relative border border-gray-200 animate-slideUp">
