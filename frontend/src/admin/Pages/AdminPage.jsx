@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { ChevronRight, ChevronLeft } from "lucide-react"; // ✅ arrow icons npm install lucide-react
 
-import axiosInstance from "../../src/axiosInstance";
+import axiosInstance from "../../axiosInstance";
 import Dashboard from "../Components/Dashboard";
 import GalleryManager from "../Components/GalleryManager";
 import ChangePasswordForm from "../Components/ChangePasswordForm";
@@ -124,4 +124,5 @@ export default function AdminPage() {
       </div>
     </div>
   );
+
 }
