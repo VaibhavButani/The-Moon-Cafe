@@ -7,6 +7,7 @@ import fs from "fs";
 import multer from "multer";
 import path from "path";
 import { fileURLToPath } from "url";
+import contactRoutes from "./routes/contactRoutes.js"; // ✅ import router
 
 dotenv.config();
 
@@ -14,18 +15,17 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// ===== Static Uploads Folder =====
+// Serve static files
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-// ===== Files =====
 const DB_FILE = "./admin.json";
-const CONTACT_FILE = "./contacts.json";
 const GALLERY_FILE = "./gallery.json";
 const JWT_SECRET = process.env.JWT_SECRET || "supersecretkey123";
 
-// ===== Admin Helpers =====
+// ========== ADMIN HELPERS ==========
 function readAdmin() {
   if (!fs.existsSync(DB_FILE)) return null;
   return JSON.parse(fs.readFileSync(DB_FILE, "utf8"));
@@ -34,7 +34,7 @@ function saveAdmin(admin) {
   fs.writeFileSync(DB_FILE, JSON.stringify(admin, null, 2));
 }
 
-// ===== Middleware =====
+// ========== MIDDLEWARE ==========
 function verifyToken(req, res, next) {
   let token = req.headers["authorization"];
   if (!token) return res.status(403).json({ message: "No token provided" });
@@ -50,7 +50,7 @@ function verifyToken(req, res, next) {
   });
 }
 
-// ===== AUTH =====
+// ========== AUTH ==========
 app.get("/create-admin", async (req, res) => {
   const hashedPassword = await bcrypt.hash("admin123", 10);
   const admin = { username: "admin", password: hashedPassword };
@@ -101,46 +101,10 @@ app.post("/api/change-password", verifyToken, async (req, res) => {
   res.json({ message: "Password updated successfully" });
 });
 
-// ===== CONTACTS =====
-app.post("/api/contact", (req, res) => {
-  const newMsg = { id: Date.now(), ...req.body };
+// ========== CONTACT ==========
+app.use("/api", contactRoutes); // ✅ mount contact router
 
-  let data = [];
-  if (fs.existsSync(CONTACT_FILE)) {
-    data = JSON.parse(fs.readFileSync(CONTACT_FILE, "utf8"));
-  }
-  data.push(newMsg);
-
-  fs.writeFileSync(CONTACT_FILE, JSON.stringify(data, null, 2));
-  res.json({ success: true, message: "Contact saved ✅", data: newMsg });
-});
-
-app.get("/api/contact", verifyToken, (req, res) => {
-  if (!fs.existsSync(CONTACT_FILE)) return res.json([]);
-  const data = JSON.parse(fs.readFileSync(CONTACT_FILE, "utf8"));
-  res.json(data);
-});
-
-app.delete("/api/contact/:id", verifyToken, (req, res) => {
-  if (!fs.existsSync(CONTACT_FILE)) {
-    return res.status(404).json({ message: "No contacts found" });
-  }
-
-  let data = JSON.parse(fs.readFileSync(CONTACT_FILE, "utf8"));
-  const id = parseInt(req.params.id, 10);
-
-  const index = data.findIndex((msg) => msg.id === id);
-  if (index === -1) {
-    return res.status(404).json({ message: "Message not found" });
-  }
-
-  data.splice(index, 1);
-  fs.writeFileSync(CONTACT_FILE, JSON.stringify(data, null, 2));
-
-  res.json({ success: true, message: "Message deleted successfully" });
-});
-
-// ===== GALLERY =====
+// ========== GALLERY ==========
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     if (!fs.existsSync("uploads/gallery")) {
@@ -211,7 +175,7 @@ app.delete("/api/gallery/:filename", (req, res) => {
   res.json({ success: true, message: "Image deleted successfully" });
 });
 
-// ===== START SERVER =====
+// ========== START ==========
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`✅ Server running on http://0.0.0.0:${PORT}`);
