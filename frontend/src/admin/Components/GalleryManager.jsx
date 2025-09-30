@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import axios from "axios";
-import API_BASE from "../../src/config";
+import API_BASE from "../../config";
 
 export default function GalleryManager() {
   const [images, setImages] = useState([]);
@@ -228,4 +228,5 @@ export default function GalleryManager() {
       </div>
     </div>
   );
+
 }
