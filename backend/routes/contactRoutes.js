@@ -5,29 +5,30 @@ import path from "path";
 const router = express.Router();
 const contactsFile = path.join(process.cwd(), "contacts.json");
 
-// Read contacts.json safely
+// ===== Helpers =====
 const readContacts = () => {
   if (!fs.existsSync(contactsFile)) return [];
   const data = fs.readFileSync(contactsFile, "utf-8");
   return JSON.parse(data || "[]");
 };
 
-// Write contacts.json
 const writeContacts = (contacts) => {
   fs.writeFileSync(contactsFile, JSON.stringify(contacts, null, 2));
 };
 
-// GET all contacts
+// ===== Routes =====
+
+// GET all contacts (admin protected)
 router.get("/contact", (req, res) => {
   const contacts = readContacts();
   res.json(contacts);
 });
 
-// POST new contact
+// POST new contact (public form)
 router.post("/contact", (req, res) => {
   const contacts = readContacts();
   const newContact = {
-    id: Date.now().toString(), // simple unique id
+    id: Date.now().toString(),
     ...req.body,
   };
   contacts.push(newContact);
@@ -35,7 +36,7 @@ router.post("/contact", (req, res) => {
   res.status(201).json(newContact);
 });
 
-// DELETE contact
+// DELETE contact (admin protected)
 router.delete("/contact/:id", (req, res) => {
   let contacts = readContacts();
   const newContacts = contacts.filter((c) => c.id !== req.params.id);
