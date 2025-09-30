@@ -14,18 +14,18 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Serve static files
+// ===== Static Uploads Folder =====
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
+// ===== Files =====
 const DB_FILE = "./admin.json";
 const CONTACT_FILE = "./contacts.json";
 const GALLERY_FILE = "./gallery.json";
 const JWT_SECRET = process.env.JWT_SECRET || "supersecretkey123";
 
-// ========== ADMIN HELPERS ==========
+// ===== Admin Helpers =====
 function readAdmin() {
   if (!fs.existsSync(DB_FILE)) return null;
   return JSON.parse(fs.readFileSync(DB_FILE, "utf8"));
@@ -34,7 +34,7 @@ function saveAdmin(admin) {
   fs.writeFileSync(DB_FILE, JSON.stringify(admin, null, 2));
 }
 
-// ========== MIDDLEWARE ==========
+// ===== Middleware =====
 function verifyToken(req, res, next) {
   let token = req.headers["authorization"];
   if (!token) return res.status(403).json({ message: "No token provided" });
@@ -50,7 +50,7 @@ function verifyToken(req, res, next) {
   });
 }
 
-// ========== AUTH ==========
+// ===== AUTH =====
 app.get("/create-admin", async (req, res) => {
   const hashedPassword = await bcrypt.hash("admin123", 10);
   const admin = { username: "admin", password: hashedPassword };
@@ -101,7 +101,7 @@ app.post("/api/change-password", verifyToken, async (req, res) => {
   res.json({ message: "Password updated successfully" });
 });
 
-// ========== CONTACT ==========
+// ===== CONTACTS =====
 app.post("/api/contact", (req, res) => {
   const newMsg = { id: Date.now(), ...req.body };
 
@@ -140,7 +140,7 @@ app.delete("/api/contact/:id", verifyToken, (req, res) => {
   res.json({ success: true, message: "Message deleted successfully" });
 });
 
-// ========== GALLERY ==========
+// ===== GALLERY =====
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     if (!fs.existsSync("uploads/gallery")) {
@@ -211,7 +211,7 @@ app.delete("/api/gallery/:filename", (req, res) => {
   res.json({ success: true, message: "Image deleted successfully" });
 });
 
-// ========== START ==========
+// ===== START SERVER =====
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`✅ Server running on http://0.0.0.0:${PORT}`);
