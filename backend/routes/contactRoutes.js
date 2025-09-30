@@ -1,7 +1,7 @@
 import express from "express";
 import fs from "fs";
 import path from "path";
-import { verifyToken } from "./auth.js";
+import { verifyToken } from "../middleware/auth.js";
 
 const router = express.Router();
 const CONTACT_FILE = path.join(process.cwd(), "backend/contacts.json");
