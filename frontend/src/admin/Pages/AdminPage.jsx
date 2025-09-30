@@ -118,7 +118,13 @@ export default function AdminPage() {
           />
         )}
 
-        <ContactList contacts={contacts} handleDelete={handleDelete} />
+        {selectedFunction === "contacts" && (
+          <div className="space-y-6">
+
+            {/* Contact list */}
+            <ContactList contacts={contacts} handleDelete={handleDelete} />
+          </div>
+        )}
 
         {selectedFunction === "gallery" && <GalleryManager />}
         {selectedFunction === "changePassword" && <ChangePasswordForm />}
