@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { ChevronRight, ChevronLeft } from "lucide-react"; // ✅ arrow icons npm install lucide-react
+import { ChevronRight, ChevronLeft } from "lucide-react"; // arrow icons
 
 import axiosInstance from "../../axiosInstance";
 import Dashboard from "../Components/Dashboard";
@@ -12,9 +12,9 @@ export default function AdminPage() {
   const [message, setMessage] = useState("");
   const [contacts, setContacts] = useState([]);
   const [galleryCount, setGalleryCount] = useState(0);
-  const [sidebarOpen, setSidebarOpen] = useState(false); // 🔹 sidebar toggle
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  // 🔹 Fetch admin message
+  // Fetch admin message
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) return (window.location.href = "/admin/login");
@@ -25,27 +25,27 @@ export default function AdminPage() {
       .catch(() => (window.location.href = "/admin/login"));
   }, []);
 
-  // 🔹 Fetch contacts
+  // Fetch contacts
   useEffect(() => {
     if (selectedFunction === "contacts" || selectedFunction === "dashboard") {
       axiosInstance
         .get("/api/contact")
-        .then((res) => setContacts(res.data))
+        .then((res) => setContacts(Array.isArray(res.data) ? res.data : []))
         .catch(() => setContacts([]));
     }
   }, [selectedFunction]);
 
-  // 🔹 Fetch gallery count
+  // Fetch gallery count
   useEffect(() => {
     if (selectedFunction === "gallery" || selectedFunction === "dashboard") {
       axiosInstance
         .get("/api/gallery")
-        .then((res) => setGalleryCount(res.data.length))
+        .then((res) => setGalleryCount(Array.isArray(res.data) ? res.data.length : 0))
         .catch(() => setGalleryCount(0));
     }
   }, [selectedFunction]);
 
-  // 🔹 Delete contact
+  // Delete contact
   const handleDelete = async (id) => {
     try {
       await axiosInstance.delete(`/api/contact/${id}`);
@@ -57,7 +57,7 @@ export default function AdminPage() {
     }
   };
 
-  // 🔹 Logout
+  // Logout
   const handleLogout = () => {
     localStorage.removeItem("token");
     window.location.href = "/";
@@ -81,7 +81,7 @@ export default function AdminPage() {
             }`}
             onClick={() => {
               setSelectedFunction(tab);
-              setSidebarOpen(false); // auto-close on mobile
+              setSidebarOpen(false);
             }}
           >
             {tab === "dashboard" && "Dashboard"}
@@ -110,9 +110,9 @@ export default function AdminPage() {
       <div className="flex-1 p-6 lg:p-10 overflow-auto">
         {selectedFunction === "dashboard" && (
           <Dashboard
-            message={message}
-            contactCount={contacts.length}
-            galleryCount={galleryCount}
+            message={message || "Welcome back!"}
+            contactCount={contacts.length || 0}
+            galleryCount={galleryCount || 0}
             setSelectedFunction={setSelectedFunction}
           />
         )}
@@ -122,7 +122,6 @@ export default function AdminPage() {
         {selectedFunction === "gallery" && <GalleryManager />}
         {selectedFunction === "changePassword" && <ChangePasswordForm />}
       </div>
-    </div>
-  );
-
+    </div>
+  );
 }
