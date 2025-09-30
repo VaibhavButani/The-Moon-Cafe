@@ -1,6 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
-import API_BASE from "../../src/config"; // ✅ import config
+import API_BASE from "../../config"; // ✅ import config
 
 export default function ChangePasswordForm() {
   const [oldPassword, setOldPassword] = useState("");
@@ -109,3 +109,4 @@ export default function ChangePasswordForm() {
     </div>
   );
 }
+
