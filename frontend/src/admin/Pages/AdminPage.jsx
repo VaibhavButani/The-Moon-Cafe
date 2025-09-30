@@ -118,19 +118,7 @@ export default function AdminPage() {
           />
         )}
 
-        {selectedFunction === "contacts" && (
-          <div className="space-y-6">
-            {/* Contact form */}
-            <ContactList
-              onSuccess={(newMessage) =>
-                setContacts((prev) => [...prev, newMessage])
-              }
-            />
-
-            {/* Contact list */}
-            <ContactList contacts={contacts} handleDelete={handleDelete} />
-          </div>
-        )}
+        <ContactList contacts={contacts} handleDelete={handleDelete} />
 
         {selectedFunction === "gallery" && <GalleryManager />}
         {selectedFunction === "changePassword" && <ChangePasswordForm />}
@@ -138,4 +126,3 @@ export default function AdminPage() {
     </div>
   );
 }
-
