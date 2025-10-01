@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
-import API_BASE from "../../config";
+import axiosInstance from "../../axiosInstance";
 
 export default function ContactList() {
   const [contacts, setContacts] = useState([]);
@@ -17,15 +16,11 @@ export default function ContactList() {
     try {
       setLoading(true);
       setError("");
-      const res = await axios.get(`${API_BASE}/api/contact`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`, // send token
-        },
-      });
+      const res = await axiosInstance.get("/api/contact");
       setContacts(Array.isArray(res.data) ? res.data : []);
     } catch (err) {
       console.error("Error fetching contacts:", err);
-      setError("❌ Failed to load contacts.");
+      setError("❌ Failed to load contacts (401 Unauthorized?)");
       setContacts([]);
     } finally {
       setLoading(false);
@@ -36,11 +31,7 @@ export default function ContactList() {
     if (!window.confirm("⚠️ Are you sure you want to delete this message?")) return;
 
     try {
-      await axios.delete(`${API_BASE}/api/contact/${id}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
+      await axiosInstance.delete(`/api/contact/${id}`);
       setContacts((prev) => prev.filter((c) => c.id !== id));
     } catch (err) {
       console.error("Error deleting contact:", err);
