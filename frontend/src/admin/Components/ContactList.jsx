@@ -1,30 +1,72 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
+import API_BASE from "../../config";
 
-export default function ContactList({ contacts = [], handleDelete }) {
+export default function ContactList() {
+  const [contacts, setContacts] = useState([]);
   const [selectedContact, setSelectedContact] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const confirmAndDelete = async (id) => {
-    if (window.confirm("⚠️ Are you sure you want to delete this message?")) {
-      if (!handleDelete) return;
+  // Fetch contacts on mount
+  useEffect(() => {
+    fetchContacts();
+  }, []);
 
-      const success = await handleDelete(id);
-      if (!success) alert("❌ Failed to delete. Please try again.");
+  const fetchContacts = async () => {
+    try {
+      setLoading(true);
+      setError("");
+      const res = await axios.get(`${API_BASE}/api/contact`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`, // send token
+        },
+      });
+      setContacts(Array.isArray(res.data) ? res.data : []);
+    } catch (err) {
+      console.error("Error fetching contacts:", err);
+      setError("❌ Failed to load contacts.");
+      setContacts([]);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const safeContacts = Array.isArray(contacts) ? contacts : [];
+  const handleDelete = async (id) => {
+    if (!window.confirm("⚠️ Are you sure you want to delete this message?")) return;
+
+    try {
+      await axios.delete(`${API_BASE}/api/contact/${id}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      setContacts((prev) => prev.filter((c) => c.id !== id));
+    } catch (err) {
+      console.error("Error deleting contact:", err);
+      alert("❌ Failed to delete message.");
+    }
+  };
 
   return (
-    <div className="bg-white shadow-lg rounded-2xl p-6 border border-gray-200 relative">
-      <h2 className="text-2xl font-bold mb-4 text-[#957d49] flex items-center gap-2">
-        📩 Contact Messages <span className="text-gray-600">({safeContacts.length})</span>
+    <div className="p-6 bg-[#e2dbcd] min-h-screen">
+      <h2 className="text-2xl font-bold mb-4 text-[#3d2f23] flex items-center gap-2">
+        📩 Contact Messages <span className="text-gray-600">({contacts.length})</span>
       </h2>
 
-      {safeContacts.length === 0 ? (
-        <p className="text-gray-600 text-center py-10">No messages yet.</p>
+      {error && (
+        <div className="mb-4 p-3 bg-red-100 text-red-700 border border-red-400 rounded">
+          {error}
+        </div>
+      )}
+
+      {loading ? (
+        <p className="text-center text-gray-600">Loading contacts...</p>
+      ) : contacts.length === 0 ? (
+        <p className="text-center text-gray-600">No messages yet.</p>
       ) : (
         <ul className="space-y-4">
-          {safeContacts.map((msg, index) => (
+          {contacts.map((msg, index) => (
             <li
               key={msg.id || index}
               className="border p-4 rounded-xl shadow-md bg-[#f9f7f3] flex justify-between items-center hover:shadow-lg transition"
@@ -39,18 +81,16 @@ export default function ContactList({ contacts = [], handleDelete }) {
               <div className="flex gap-3">
                 <button
                   onClick={() => setSelectedContact(msg)}
-                  className="bg-blue-500 text-white px-4 py-1.5 rounded-lg hover:bg-blue-600 hover:scale-105 transition shadow cursor-pointer"
+                  className="bg-blue-500 text-white px-4 py-1.5 rounded-lg hover:bg-blue-600 hover:scale-105 transition shadow"
                 >
                   View
                 </button>
-                {handleDelete && (
-                  <button
-                    onClick={() => confirmAndDelete(msg.id)}
-                    className="bg-red-500 text-white px-4 py-1.5 rounded-lg hover:bg-red-600 hover:scale-105 transition shadow cursor-pointer"
-                  >
-                    Delete
-                  </button>
-                )}
+                <button
+                  onClick={() => handleDelete(msg.id)}
+                  className="bg-red-500 text-white px-4 py-1.5 rounded-lg hover:bg-red-600 hover:scale-105 transition shadow"
+                >
+                  Delete
+                </button>
               </div>
             </li>
           ))}
