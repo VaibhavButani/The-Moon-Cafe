@@ -1,7 +1,8 @@
 import express from "express";
 import fs from "fs";
 import path from "path";
-import { verifyToken } from "../middleware/auth.js";
+import { verifyToken } from "./adminRoutes.js";
+
 
 const router = express.Router();
 
